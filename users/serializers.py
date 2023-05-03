@@ -31,5 +31,5 @@ class UserSerializer(serializers.ModelSerializer):
             "blocked_until",
             "is_employee",
         ]
-        read_only_fields = ["blocked_until"]
+        # read_only_fields = ["blocked_until"]
         extra_kwargs = {"password": {"write_only": True}}
