@@ -2,6 +2,18 @@ from rest_framework.views import APIView, Response
 from .models import Album
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
+from users.permissions import isEmployee
+from .models import Book
+from .serializers import BookSerializer
+
+
+class BookView(generics.ListCreateAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [isEmployee]
+
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+
 
 
 class FollowView(APIView):
