@@ -1,0 +1,40 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyPep8Inspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="ignoredErrors">
+        <list>
+          <option value="E305" />
+        </list>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="PyPep8NamingInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="ignoredErrors">
+        <list>
+          <option value="N802" />
+          <option value="N806" />
+        </list>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="kopa_do_mundo.teams.models.Team._meta" />
+          <option value="teams.models.Team.objects" />
+          <option value="teams.models.Team.DoesNotExist" />
+          <option value="pets.models.Pet.objects" />
+          <option value="groups.models.Group.objects" />
+          <option value="traits.models.Trait.objects" />
+          <option value="pets.models.Pet.object" />
+          <option value="groups.models.Group.DoesNotExist" />
+          <option value="pets.models.Pet.traits" />
+          <option value="users.urls.rest_framework_simplejwt" />
+          <option value="movies.models.Movie.objects" />
+          <option value="movies.views.generics" />
+          <option value="rest_framework.permissions.IsAuthenticatedOrOwner" />
+          <option value="dotenv" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
