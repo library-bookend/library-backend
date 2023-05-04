@@ -17,6 +17,9 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         if "is_employee" in validated_data and validated_data["is_employee"] is True:
             return User.objects.create_superuser(**validated_data)
+
+        if "status" not in validated_data:
+            validated_data["status"] = "active"
         return User.objects.create_user(**validated_data)
 
     class Meta:
