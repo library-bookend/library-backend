@@ -9,7 +9,13 @@ class isEmployee(permissions.BasePermission):
             and request.user.is_superuser
             or request.method in request_method
         )
-    
+
+
 class IsEmployeeOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.method in permissions.SAFE_METHODS or request.user.is_employee
+        return request.method in permissions.SAFE_METHODS or request.user.is_superuser
+
+
+class isOwnerOrEmployee(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj == request.user or request.user.is_superuser

@@ -32,7 +32,7 @@ class Book(models.Model):
         choices=Genre.choices, default=Genre.UNDEFINED, max_length=50
     )
     pages = models.IntegerField()
-    isbn = models.CharField(max_length=13, unique=True)
+    isbn = models.CharField(max_length=13)
     copies_amount = models.IntegerField()
     book_cover = models.TextField()
 
