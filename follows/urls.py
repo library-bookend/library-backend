@@ -1,7 +1,6 @@
 from django.urls import path
-from .views import FollowView, FollowDetailView
+from .views import FollowDetailView
 
 urlpatterns = [
-    path("follows/", FollowView.as_view()),
-    path("follows/<int:book_id>/", FollowDetailView.as_view()),
+    path('books/<int:pk>/follows/', FollowDetailView.as_view()),
 ]
