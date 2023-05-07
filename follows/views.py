@@ -1,9 +1,10 @@
-from .models import Book
+from books.models import Book
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from library_bookend.permissions import isEmployeeOrReadOnly
+from books.serializers import BookSerializer
+from users.serializers import UserSerializer
 
 
 class FollowDetailView(APIView):
@@ -12,7 +13,14 @@ class FollowDetailView(APIView):
 
     def get(self, request, pk):
         book = Book.objects.get(pk=pk)
-        return Response({"count": book.followers.count(), "followers": book.followers.all()})
+        serializer = BookSerializer(book)
+        users = serializer.data["followers"]
+        user_serialized = UserSerializer(users, many=True)
+
+        if request.user.is_employee:
+            return Response({"count": book.followers.count(), "followers": user_serialized.data})
+
+        return Response({"count": book.followers.count()})    
 
     def post(self, request, pk):
         book = Book.objects.get(pk=pk)
