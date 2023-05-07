@@ -3,6 +3,7 @@ from django.urls import path
 from . import views
 
 
-# urlpatterns = [
-#     path("books/<uuid:book_id>/copies/", views.CopyView.as_view()),
-# ]
+urlpatterns = [
+    path("loans/<uuid:book_id>/", views.LoanView.as_view()),
+    path("returns/<uuid>book_id/", views.ReturnView.as_view())
+]
