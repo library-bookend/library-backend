@@ -6,10 +6,10 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import generics
 from library_bookend.permissions import IsEmployeeOrReadOnly
 from django.http import HttpResponse
-from .serializers import CopySerializer, LoanSerializer
+from .serializers import CopySerializer
+from loans.serializers import LoanSerializer
 from users.models import User
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-
 
 
 class CopyView(generics.ListAPIView):
@@ -44,8 +44,7 @@ class LoanView(generics.ListCreateAPIView):
         user = get_object_or_404(User, username=self.request.data["username"])
         copy = Copy.objects.filter(book__id=book_id, status=False)
         if copy:
-            serializer.save(return_date=get_return_date(),
-                            copy=copy[0], user=user)
+            serializer.save(return_date=get_return_date(), copy=copy[0], user=user)
             CopySerializer(copy[0])
             copy[0].status = True
             copy[0].save()

@@ -37,7 +37,11 @@ class UserView(generics.ListCreateAPIView, PageNumberPagination):
     serializer_class = UserSerializer
 
     def can_borrow(self, user):
-        if user.status == "blocked" and user.blocked_until is not None and user.blocked_until > timezone.now():
+        if (
+            user.status == "blocked"
+            and user.blocked_until is not None
+            and user.blocked_until > timezone.now()
+        ):
             return False
         return True
 
@@ -49,9 +53,14 @@ class UserView(generics.ListCreateAPIView, PageNumberPagination):
 
         if not self.can_borrow(user):
             user.delete()
-            return Response({"detail": "User is blocked"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "User is blocked"}, status=status.HTTP_400_BAD_REQUEST
+            )
 
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
+
 
 class UserLoansView(generics.ListAPIView):
     authentication_classes = [JWTAuthentication]
