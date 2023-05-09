@@ -11,7 +11,6 @@ from users.models import User
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 
-
 class CopyView(generics.ListAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsEmployeeOrReadOnly]
@@ -20,7 +19,15 @@ class CopyView(generics.ListAPIView):
     def get_queryset(self):
         book_id = self.kwargs.get("book_id")
         book = get_object_or_404(Book, id=book_id)
-        return Copy.objects.filter(book__id=book_id)
+        copies = Copy.objects.filter(book__id=book_id)
+
+        for copy in copies:
+            loans = copy.loans.filter(returned=False)
+            fine = sum(loan.fine for loan in loans)
+            copy.fine = fine
+            copy.save()
+
+        return copies
 
 
 def get_return_date():
@@ -68,6 +75,13 @@ class ReturnView(generics.UpdateAPIView):
         CopySerializer(copy)
         copy.status = False
         copy.save()
+
+        if loan.return_date < datetime.datetime.now():
+            delta = datetime.datetime.now() - loan.return_date
+            fine = delta.days * 2
+            loan.fine = fine
+            loan.save()
+
         loan.returned = True
         loan.save()
         return HttpResponse({"message": "Successfully returned book"})
