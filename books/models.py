@@ -44,6 +44,7 @@ class Book(models.Model):
         "users.User", through="Rating", related_name="rated_books"
     )
 
+    @property
     def average_rating(self):
         if self.ratings.count() == 0:
             return 0

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.authentication import JWTAuthentication
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated
 from books.models import Books
 from django.db.models import Sum
 from rest_framework.response import Response
@@ -9,7 +9,7 @@ from .serializers import RatingSerializer
     
 class RatingsDetailView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = RatingSerializer(data=request.data)
