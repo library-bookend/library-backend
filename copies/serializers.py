@@ -6,9 +6,3 @@ class CopySerializer(serializers.ModelSerializer):
     class Meta:
         model = Copy
         fields = "__all__"
-
-
-class LoanSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Loan
-        fields = "__all__"

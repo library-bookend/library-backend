@@ -11,6 +11,8 @@ class FollowDetailView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    serializer_class = BookSerializer
+
     def get(self, request, pk):
         book = Book.objects.get(pk=pk)
         serializer = BookSerializer(book)
@@ -18,9 +20,11 @@ class FollowDetailView(APIView):
         user_serialized = UserSerializer(users, many=True)
 
         if request.user.is_employee:
-            return Response({"count": book.followers.count(), "followers": user_serialized.data})
+            return Response(
+                {"count": book.followers.count(), "followers": user_serialized.data}
+            )
 
-        return Response({"count": book.followers.count()})    
+        return Response({"count": book.followers.count()})
 
     def post(self, request, pk):
         book = Book.objects.get(pk=pk)
