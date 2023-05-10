@@ -31,7 +31,7 @@ class BookSerializer(serializers.ModelSerializer):
             "isbn",
             "copies_amount",
             "book_cover",
-            "followers"
+            "followers",
+            "average_rating"
         ]
-        depth = 2
-        read_only_fields = ["copies_amount", "followers"]
+        read_only_fields = ["copies_amount", "followers", "average_rating"]

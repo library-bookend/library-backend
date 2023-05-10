@@ -40,8 +40,28 @@ class Book(models.Model):
         "users.User", through="Follow", related_name="following"
     )
 
+    ratings = models.ManyToManyField(
+        "users.User", through="Rating", related_name="rated_books"
+    )
+
+    @property
+    def average_rating(self):
+        if self.ratings.count() == 0:
+            return 0
+        else:
+            return sum([r.rating for r in self.ratings.all()]) / self.ratings.count()
+
+    def __str__(self):
+        return self.title
+
 
 class Follow(models.Model):
     book = models.ForeignKey("books.Book", on_delete=models.CASCADE)
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     status = models.BooleanField(default=False)
+
+
+class Rating(models.Model):
+    book = models.ForeignKey("books.Book", on_delete=models.CASCADE)
+    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    rating = models.IntegerField(default=0)

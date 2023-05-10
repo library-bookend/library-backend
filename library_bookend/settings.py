@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
 import dotenv
+
 dotenv.load_dotenv()
 from pathlib import Path
 from datetime import timedelta
@@ -48,7 +49,7 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
 ]
 
-THIRD_PARTY_APPS = ["rest_framework",]
+THIRD_PARTY_APPS = ["rest_framework", "drf_spectacular"]
 
 MY_APPS = ["users", "books", "copies"]
 
@@ -110,9 +111,7 @@ if DATABASE_URL:
 
 if not DEBUG:
     STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-    STATICFILES_STORAGE = (
-        "whitenoise.storage.CompressedManifestStaticFilesStorage"
-    )
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -140,11 +139,19 @@ SIMPLE_JWT = {
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 4,
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get("EMAIL")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD")
+
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Bandkamp API",
-    "DESCRIPTION": "A RESTful API where users can register songs and albums",
+    "TITLE": "BookeEnd API",
+    "DESCRIPTION": "A RESTful API for a library to register books included in the collection and copies available for loan. Users can follow books to receive an email when a copy is available.",
     "VERSION": "1.0.1",
     "SERVE_INCLUDE_SCHEMA": False,
 }
