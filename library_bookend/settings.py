@@ -142,9 +142,16 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get("EMAIL")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD")
+
 SPECTACULAR_SETTINGS = {
     "TITLE": "BookeEnd API",
-    "DESCRIPTION": "A RESTful API where users can loans their books.",
+    "DESCRIPTION": "A RESTful API for a library to register books included in the collection and copies available for loan. Users can follow books to receive an email when a copy is available.",
     "VERSION": "1.0.1",
     "SERVE_INCLUDE_SCHEMA": False,
 }

@@ -10,6 +10,8 @@ from .serializers import CopySerializer
 from loans.serializers import LoanSerializer
 from users.models import User
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from django.core.mail import send_mail
+import os
 
 
 class CopyView(generics.ListAPIView):
@@ -57,7 +59,7 @@ class LoanView(generics.ListCreateAPIView):
             copy[0].status = True
             copy[0].save()
         else:
-            raise ValueError("all books are borrowed")
+            raise ValueError("all copies are borrowed")
 
 
 class ReturnView(generics.UpdateAPIView):
@@ -84,4 +86,14 @@ class ReturnView(generics.UpdateAPIView):
 
         loan.returned = True
         loan.save()
+
+        users = User.objects.filter(following__book=loan.copy.book, following__status=True)
+
+        for user in users:
+            subject = f"Book Available: {loan.copy.book.title}"
+            message = f"The book {loan.copy.book.title} is now available for loan at the library."
+            from_email =  os.environ.get("EMAIL") #este projeto utiliza o email fornecido via venv por fins de testes e entrega, em um projeto real aqui iria o email da empresa
+            to_email = [user.email]
+            send_mail(subject, message, from_email, to_email, fail_silently=False)
+
         return HttpResponse({"message": "Successfully returned book"})
