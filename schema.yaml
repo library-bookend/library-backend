@@ -2,7 +2,9 @@ openapi: 3.0.3
 info:
   title: BookeEnd API
   version: 1.0.1
-  description: A RESTful API where users can loans their books.
+  description: A RESTful API for a library to register books included in the collection
+    and copies available for loan. Users can follow books to receive an email when
+    a copy is available.
 paths:
   /api/books/:
     get:
@@ -142,6 +144,22 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/books/{id}/ratings/:
+    post:
+      operationId: api_books_ratings_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
   /api/loans/{book_id}/:
     get:
       operationId: api_loans_list
@@ -149,8 +167,7 @@ paths:
       - in: path
         name: book_id
         schema:
-          type: string
-          format: uuid
+          type: integer
         required: true
       - name: page
         required: false
@@ -176,8 +193,7 @@ paths:
       - in: path
         name: book_id
         schema:
-          type: string
-          format: uuid
+          type: integer
         required: true
       tags:
       - api
@@ -228,14 +244,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/TokenObtainPair'
           description: ''
-  /api/returns/{uuid}book_id/:
+  /api/returns/{loan_id}/:
     put:
-      operationId: api_returns_book_id_update
+      operationId: api_returns_update
       parameters:
       - in: path
-        name: uuid
+        name: loan_id
         schema:
-          type: string
+          type: integer
         required: true
       tags:
       - api
@@ -260,12 +276,12 @@ paths:
                 $ref: '#/components/schemas/Loan'
           description: ''
     patch:
-      operationId: api_returns_book_id_partial_update
+      operationId: api_returns_partial_update
       parameters:
       - in: path
-        name: uuid
+        name: loan_id
         schema:
-          type: string
+          type: integer
         required: true
       tags:
       - api
@@ -394,8 +410,12 @@ components:
           items:
             type: integer
           readOnly: true
+        average_rating:
+          type: string
+          readOnly: true
       required:
       - author
+      - average_rating
       - book_cover
       - copies_amount
       - description
@@ -410,10 +430,10 @@ components:
         id:
           type: integer
           readOnly: true
-        status:
-          type: boolean
         book:
           type: integer
+        status:
+          type: boolean
         loans:
           type: array
           items:
