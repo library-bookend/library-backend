@@ -17,12 +17,10 @@ class FollowDetailView(APIView):
         book = Book.objects.get(pk=pk)
         serializer = BookSerializer(book)
         users = serializer.data["followers"]
-        user_serialized = UserSerializer(users, many=True)
+        # user_serialized = User.objects.get(users, many=True)
 
         if request.user.is_employee:
-            return Response(
-                {"count": book.followers.count(), "followers": user_serialized.data}
-            )
+            return Response({"count": book.followers.count(), "followers": users})
 
         return Response({"count": book.followers.count()})
 

@@ -12,6 +12,7 @@ from users.models import User
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.core.mail import send_mail
 import os
+import ipdb
 
 
 class CopyView(generics.ListAPIView):
@@ -25,7 +26,7 @@ class CopyView(generics.ListAPIView):
         copies = Copy.objects.filter(book__id=book_id)
 
         for copy in copies:
-            loans = copy.loans.filter(returned=False)
+            loans = Loan.objects.filter(copy=copy)
             fine = sum(loan.fine for loan in loans)
             copy.fine = fine
             copy.save()
@@ -87,12 +88,16 @@ class ReturnView(generics.UpdateAPIView):
         loan.returned = True
         loan.save()
 
-        users = User.objects.filter(following__book=loan.copy.book, following__status=True)
+        users = User.objects.filter(
+            following__book=loan.copy.book, following__status=True
+        )
 
         for user in users:
             subject = f"Book Available: {loan.copy.book.title}"
             message = f"The book {loan.copy.book.title} is now available for loan at the library."
-            from_email =  os.environ.get("EMAIL") #este projeto utiliza o email fornecido via venv por fins de testes e entrega, em um projeto real aqui iria o email da empresa
+            from_email = os.environ.get(
+                "EMAIL"
+            )  # este projeto utiliza o email fornecido via venv por fins de testes e entrega, em um projeto real aqui iria o email da empresa
             to_email = [user.email]
             send_mail(subject, message, from_email, to_email, fail_silently=False)
 
