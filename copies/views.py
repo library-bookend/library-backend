@@ -4,6 +4,7 @@ from .models import Copy, Loan
 from books.models import Book
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import generics
+from rest_framework.views import Response
 from library_bookend.permissions import IsEmployeeOrReadOnly
 from django.http import HttpResponse
 from .serializers import CopySerializer
@@ -13,6 +14,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.core.mail import send_mail
 import os
 import ipdb
+import pytz
 
 
 class CopyView(generics.ListAPIView):
@@ -70,16 +72,20 @@ class ReturnView(generics.UpdateAPIView):
     serializer_class = LoanSerializer
 
     def update(self, request, *args, **kwargs):
+        now = datetime.datetime.now(datetime.timezone.utc)
+        today = now.astimezone(pytz.utc).date()
+
         loan_id = self.kwargs.get("loan_id")
         loan = get_object_or_404(Loan, id=loan_id)
+
         if loan.returned:
-            return HttpResponse({"message": "Book already returned"})
+            return Response({"message": "Book already returned"})
         copy = Copy.objects.get(id=loan.copy.id)
         CopySerializer(copy)
         copy.status = False
         copy.save()
 
-        if loan.return_date < datetime.datetime.now():
+        if loan.return_date.date() < today:
             delta = datetime.datetime.now() - loan.return_date
             fine = delta.days * 2
             loan.fine = fine
@@ -88,17 +94,18 @@ class ReturnView(generics.UpdateAPIView):
         loan.returned = True
         loan.save()
 
-        users = User.objects.filter(
-            following__book=loan.copy.book, following__status=True
-        )
+        # users = User.objects.filter(
+        #     following__book=loan.copy.book, following__status=True
+        # )
+        
 
-        for user in users:
-            subject = f"Book Available: {loan.copy.book.title}"
-            message = f"The book {loan.copy.book.title} is now available for loan at the library."
-            from_email = os.environ.get(
-                "EMAIL"
-            )  # este projeto utiliza o email fornecido via venv por fins de testes e entrega, em um projeto real aqui iria o email da empresa
-            to_email = [user.email]
-            send_mail(subject, message, from_email, to_email, fail_silently=False)
+        # for user in users:
+        #     subject = f"Book Available: {loan.copy.book.title}"
+        #     message = f"The book {loan.copy.book.title} is now available for loan at the library."
+        #     from_email = os.environ.get(
+        #         "EMAIL"
+        #     )  # este projeto utiliza o email fornecido via venv por fins de testes e entrega, em um projeto real aqui iria o email da empresa
+        #     to_email = [user.email]
+        #     send_mail(subject, message, from_email, to_email, fail_silently=False)
 
-        return HttpResponse({"message": "Successfully returned book"})
+        return Response({"message": "Successfully returned book"})
